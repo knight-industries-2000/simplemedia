@@ -136,6 +136,3 @@ if start == 'init':
 
 else:
     print ("Startinitialisierung nicht gesetzt")
-
- 
-
