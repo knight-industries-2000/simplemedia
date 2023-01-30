@@ -1,138 +1,116 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 
 import curses
 import os
-import signal
+import random
 import time
-import traceback
 
 start = 'init'
-sleep_interval = 2;
+sleep_interval = 0 # was 2
+the_void = os.open('/dev/null', os.O_WRONLY)
+video_player = "vlc" # was omxplayer --no-osd --hw
+assets_directory = "assets"
+
+def play_video(path):
+    original_file_descriptor = os.dup(1)
+    os.dup2(the_void, 1)
+    os.system(video_player + " " + path)
+    os.dup2(original_file_descriptor, 1)
 
 if start == 'init':
   try:
 
-  
     # Initialize main window
-    stdscr = curses.initscr()
-    
+    main_window = curses.initscr()
+
     # Shut off output
     curses.noecho()
     # Shut off line buffer
     curses.cbreak()
     # Make cursor and special keys available
-    stdscr.keypad(0)
+    main_window.keypad(False)
     curses.curs_set(0)
-    
+
     # Define colors
     curses.start_color()
     curses.init_pair(1, curses.COLOR_WHITE, curses.COLOR_BLACK)
-    
+
     # Assign defined colors
-    stdscr.bkgd(curses.color_pair(1))
-    stdscr.refresh()
-    
-    # Add output
-    stdscr.addstr(0, 0, "KNIGHT Industries, System Security Interface")
-    stdscr.addstr(1, 0, "Version 0.9.1, Alpha E")
-    stdscr.addstr(2, 0, "")
-
-    # Wait...    
-    stdscr.refresh()
-    time.sleep(sleep_interval)
+    main_window.bkgd(curses.color_pair(1))
+    main_window.refresh()
 
     # Add output
-    stdscr.addstr(3, 0, "Serial Number:                                                 Alpha Delta 227529, Rev. B")
-    stdscr.addstr(4, 0, "Vehicle Registration:                              CALIFORNIA KNIGHT              05/1982")
-    stdscr.addstr(5, 0, "Authorized Drivers:                                Knight, Michael             1952/07/17")
-    stdscr.addstr(6, 0, "                                                   Kraus,  Marcel              1984/06/29")
-    stdscr.addstr(7, 0, "")
+    main_window.addstr(4, 9, "KNIGHT Industries, System Security Interface")
+    main_window.addstr(5, 9, "Version 0.9.1, Alpha E")
 
     # Wait...
-    stdscr.refresh()
+    main_window.refresh()
     time.sleep(sleep_interval)
 
     # Add output
-    stdscr.addstr( 8, 0, "> System Main")
-    stdscr.addstr( 9, 0, "Loading main containment enclosure...")
-    stdscr.addstr(10, 0, "Data Link Layer                                                                     [OK]")
-    stdscr.addstr(11, 0, "Communication Layer                                                                 [OK]")
-    stdscr.addstr(12, 0, "Application Layer                                                                   [OK]")
-    stdscr.addstr(13, 0, "")
-	
-	# Wait...
-    stdscr.refresh()
+    main_window.addstr(7, 9, "Serial Number:                             Alpha Delta 227529, Mk. II")
+    main_window.addstr(8, 9, "Vehicle Registration:          CALIFORNIA KNIGHT              05/1982")
+    main_window.addstr(9, 9, "Authorized Operator:           Kraus,  Marcel              1984/06/29")
+
+    # Wait...
+    main_window.refresh()
     time.sleep(sleep_interval)
-    
+
     # Add output
-    stdscr.addstr(14, 0, "> System Multimedia")
-    stdscr.addstr(15, 0, "Loading multimedia enclosure...")
-    stdscr.addstr(16, 0, "Audio Playback                                                                      [OK]")
-    stdscr.addstr(17, 0, "Video Playback                                                                      [OK]")
-    stdscr.addstr(18, 0, "Voice Recognition                                                             [DISABLED]")
-    stdscr.addstr(19, 0, "")
-    
+    main_window.addstr(11, 9, "> System Main: Loading main containment enclosure...")
+    main_window.addstr(12, 9, "Data Link Layer                                                  [OK]")
+    main_window.addstr(13, 9, "Communication Layer                                              [OK]")
+    main_window.addstr(14, 9, "Application Layer                                                [OK]")
+
 	# Wait...
-    stdscr.refresh()
+    main_window.refresh()
     time.sleep(sleep_interval)
-    
+
     # Add output
-    stdscr.addstr(20, 0, "> System Security")
-    stdscr.addstr(21, 0, "Loading main security enclosure...")
-    stdscr.addstr(22, 0, "Primary Firewall                                                                    [OK]")
-    stdscr.addstr(23, 0, "Secondary Firewall                                                                  [OK]")
-    stdscr.addstr(24, 0, "Logging/Keychecks                                                                [ERROR]")
-    stdscr.addstr(25, 0, "WARNING: Unrecognizable object \"whte_rbt.obj\" found. Proceeding... ")
-    stdscr.addstr(26, 0, "")
-       
+    main_window.addstr(16, 9, "> System Security: Loading main security enclosure...")
+    main_window.addstr(17, 9, "Firewalls                                                        [OK]")
+    main_window.addstr(18, 9, "Logging/Keychecks                                             [ERROR]")
+    main_window.addstr(19, 9, "WARNING: Unrecognizable object \"whte_rbt.obj\" found. Proceeding...")
+
 	# Wait...
-    stdscr.refresh()
+    main_window.refresh()
     time.sleep(sleep_interval)
-    
+
     # Add output
-    stdscr.addstr(27, 0, "System Ready")
-    stdscr.addstr(28, 0, "")
-    stdscr.refresh()
-    
+    main_window.addstr(21, 9, "> System Multimedia: Loading multimedia enclosure...")
+    main_window.addstr(22, 9, "Video Playback                                                   [OK]")
+    main_window.addstr(23, 9, "Voice Recognition                                          [DISABLED]")
+
+	# Wait...
+    main_window.refresh()
+    time.sleep(sleep_interval)
+
+    # Add output
+    main_window.addstr(25, 9, "System Ready")
+    main_window.refresh()
+
     # Wait for keypress
     while True:
-        key = stdscr.getch()
-        
-        available_keys = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p"]
-        dictate_voice = "Anna"
-        dictate_rate = 225
-             
-        # Break if abort key is pressed
-        if key == ord('z'):
-            break
+        all_assets = os.listdir(assets_directory)
+        assets = []
+        for i in all_assets:
+            if i[0] != ".":
+                assets.append(i)
+
+        available_keys = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "s", "t", "u", "v", "w", "x"]
+        key = main_window.getch()
+
+        if key == ord('r'):
+            play_video("'" + assets_directory + "/" + random.choice(assets) + "'")
         elif chr(key) in available_keys:
-        	# Handle dictate playback
-            if os.path.isfile("dictates/" + chr(key) + ".txt"):
-                os.system("say -r " + str(dictate_rate) + " -v " + dictate_voice + " -f " + "dictates/" + chr(key) + ".txt")
-        	# Handle audio playback
-            elif os.path.isfile("audios/" + chr(key) + ".wav"):
-                os.system("afplay audios/" + chr(key) + ".wav")
-        	# Handle video playback
-            elif os.path.isfile(path = "videos/" + chr(key) + ".mp4"):
-            	# Opens video in default player
-                os.system("open videos/" + chr(key) + ".mp4")
-        	# Fallback to error message
-            else:
-                stdscr.addstr("\n> ERROR: A handler file for key \"" + chr(key) + "\" was not found. Create a file to handle this key.")          
-            
-    # Exit Curses and return to default console
-    stdscr.keypad(0)
-    curses.echo()
-    curses.nocbreak()
-    curses.endwin()
-           
+            play_video(assets_directory + "/" + chr(key) + "_*.*")
+
   except:
       # Abort by user, terminal or source code
-      stdscr.keypad(0)
+      main_window.keypad(False)
       curses.echo()
       curses.nocbreak()
       curses.endwin()
-      traceback.print_exc() 
 
 else:
     print ("Startinitialisierung nicht gesetzt")
